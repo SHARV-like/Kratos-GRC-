@@ -14,15 +14,15 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       trim: true,
-      index: true,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Email must be valid."],
     },
     passwordHash: {
       type: String,
       required: true,
       select: false,
+      minlength: 20,
     },
     role: {
       type: String,
@@ -42,6 +42,14 @@ const userSchema = new mongoose.Schema(
   },
 );
 
+userSchema.index(
+  { email: 1 },
+  {
+    unique: true,
+    name: "email_1",
+  },
+);
+
 userSchema.methods.toPublicJSON = function toPublicJSON() {
   return {
     id: this._id.toString(),
@@ -53,5 +61,14 @@ userSchema.methods.toPublicJSON = function toPublicJSON() {
     updatedAt: this.updatedAt,
   };
 };
+
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    ret.id = ret._id.toString();
+    delete ret._id;
+    delete ret.passwordHash;
+    return ret;
+  },
+});
 
 module.exports = mongoose.model("User", userSchema);
