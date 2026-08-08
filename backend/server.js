@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 
 const connectDB = require("./config/database");
+const { validateAuthConfig } = require("./config/auth");
 const apiRoutes = require("./routes");
 const { notFoundHandler, errorHandler } = require("./middleware/errorHandler");
 const { successResponse } = require("./utils/response");
@@ -38,6 +39,7 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 const startServer = async () => {
+  validateAuthConfig();
   await connectDB();
 
   app.listen(PORT, () => {
