@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
+const authRoutes = require("./authRoutes");
 const { successResponse } = require("../utils/response");
 
 const router = express.Router();
@@ -32,5 +33,7 @@ router.get("/health", (req, res) => {
     },
   });
 });
+
+router.use("/auth", authRoutes);
 
 module.exports = router;

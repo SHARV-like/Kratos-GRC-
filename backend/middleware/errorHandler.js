@@ -13,6 +13,13 @@ const errorHandler = (error, req, res, next) => {
     return next(error);
   }
 
+  if (error.code === 11000) {
+    return errorResponse(res, {
+      statusCode: 409,
+      message: "A record with the same unique value already exists.",
+    });
+  }
+
   const statusCode = error.statusCode || error.status || 500;
   const message =
     statusCode === 500 && process.env.NODE_ENV === "production"
